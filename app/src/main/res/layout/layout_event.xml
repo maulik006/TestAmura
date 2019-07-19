@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical" android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="5dp"
+              android:layout_marginRight="5dp"
+              android:id="@+id/ll_event"
+              android:layout_marginTop="8dp"
+              android:layout_marginBottom="8dp">
+
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+
+    <LinearLayout
+            android:orientation="horizontal" android:layout_width="match_parent"
+            android:weightSum="5"
+            android:layout_height="match_parent">
+        <TextView
+                android:text="asdasd"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:id="@+id/text_view_title"
+                android:layout_width="wrap_content"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"/>
+
+        <TextView
+                android:text="X"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:id="@+id/text_view_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <TextView
+            android:text=""
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:id="@+id/text_view_agenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:text=""
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:id="@+id/text_view_participants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:text=""
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:id="@+id/text_view_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+</LinearLayout>
