@@ -13,13 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.testamura.adapter.EventListAdapter
 import com.google.firebase.database.*
 import android.app.DatePickerDialog
-import android.widget.DatePicker
 import java.util.*
 import kotlin.collections.ArrayList
 import android.app.Activity
+import android.content.DialogInterface
 import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 
 
@@ -33,6 +34,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     val myCalendar = Calendar.getInstance()
     var selectedDate = ""
     var isFilter = false
+    var builder: AlertDialog.Builder? = null
 
     var date: DatePickerDialog.OnDateSetListener =
         DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -54,10 +56,11 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         super.onStart()
 
         auth = FirebaseAuth.getInstance()
+        builder = AlertDialog.Builder(this)
+        databaseEventReference = Utils.getDatabase().getReference("events")
 
-        databaseEventReference = Utils.getDatabase().getReference("events");
-
-        databaseEventReference?.addValueEventListener(object : ValueEventListener {
+        var queryRef = databaseEventReference?.orderByChild("uid")?.equalTo(auth?.uid)
+        queryRef?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 //clearing the previous artist list
                 events.clear()
@@ -95,8 +98,8 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             true
         }
 
-        R.id.action_user -> {
-            startActivity(Intent(this@MainActivity, UsersEventsActivity::class.java))
+        R.id.action_all_data -> {
+            filterData("")
             true
         }
 
@@ -155,15 +158,21 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             isFilter = true
         }
         hideKeyboard(this)
-        DatePickerDialog(
+        val dpd = DatePickerDialog(
             this@MainActivity, date, myCalendar
                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
             myCalendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        )
+        if (v != null)
+            dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+        dpd.show()
     }
 
     private fun filterData(date: String) {
-        val queryRef = databaseEventReference?.orderByChild("date")?.equalTo(date)
+        var queryRef = databaseEventReference?.orderByChild("uid")?.equalTo(auth?.uid)
+        if (date.isNotEmpty())
+            queryRef = databaseEventReference?.orderByChild("date")?.equalTo(date)
+
         queryRef?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 //clearing the previous artist list
@@ -230,6 +239,11 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     }
 
     override fun onClick(position: Int, event: Event) {
-        databaseEventReference?.child(event.id)?.removeValue()
+        val onPositive =
+            DialogInterface.OnClickListener { _, _ -> databaseEventReference?.child(event.id)?.removeValue() }
+        val onNegative =
+            DialogInterface.OnClickListener { _, _ -> }
+        builder?.setMessage("Are you sure you want to delete?")?.setPositiveButton("Yes", onPositive)
+            ?.setNegativeButton("No", onNegative)?.show()
     }
 }
